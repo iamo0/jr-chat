@@ -4,13 +4,58 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="./css/main.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <title>Online Chat</title>
 </head>
 <body>
 
-<main class="messages">
+<div class="chat-container">
+  <!-- Header -->
+  <header class="chat-header">
+    <div class="header-title">
+      <h1 class="header">Online Chat</h1>
+    </div>
+    <div class="header-menu" id="headerMenu">
+      <button class="menu-button" id="headerMenuButton"></button>
+      <div class="dropdown-menu" id="headerDropdown">
+        <div class="dropdown-item" id="editNameOption">Edit name</div>
+        <div class="dropdown-item" id="logoutOption">Logout</div>
+      </div>
+    </div>
+  </header>
 
-</main>
+  <!-- Chat messages area -->
+  <div class="chat-area">
+    <div class="date-separator">
+      <span id="currentDate">1 Feb 2025</span>
+    </div>
+    <div class="messages" id="messagesContainer">
+      <!-- Messages will be dynamically added here -->
+    </div>
+  </div>
+
+  <!-- Message input area -->
+  <div class="input-area">
+    <div class="user-input">
+      <input type="text" id="usernameInput" placeholder="Your name" maxlength="50">
+      <textarea id="messageInput" placeholder="Write a message..." maxlength="500"></textarea>
+      <button id="sendButton" class="send-button"></button>
+    </div>
+  </div>
+</div>
+
+<!-- User name modal -->
+<div class="modal" id="nameModal">
+  <div class="modal-content">
+    <h2>Enter your name</h2>
+    <input type="text" id="newNameInput" placeholder="Your name" maxlength="50">
+    <div class="modal-buttons">
+      <button id="cancelNameButton">Cancel</button>
+      <button id="saveNameButton">Save</button>
+    </div>
+  </div>
+</div>
+
 
 <script src="./js/index.js"></script>
 
