@@ -23,7 +23,7 @@ server.get("/messages", function(req: Request, res: Response) {
   res.status(200).json([...messages, {
     "id": messages.length,
     "username": "Bot 🤖",
-    "text": "Welcome to chat",
+    "text": "Король за штурвалом: монарх Таиланда лично пилотировал Boeing 737 в Бутан",
     "timestamp": new Date().toISOString(),
   }]);
 });
