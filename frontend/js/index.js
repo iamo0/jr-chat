@@ -35,4 +35,14 @@
   }
 
   initChat();
+
+  const chatContainer = document.querySelector('.chat-container');
+
+  function scrollToBottom() {
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+  }
+
+  scrollToBottom();
 }
+
+
