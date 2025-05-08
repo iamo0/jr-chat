@@ -9,7 +9,16 @@
 <body>
 
 <header>
-  <h1>Online Chat</h1>
+  <div>
+    <h1>Online Chat</h1>
+      <div class="header-menu">
+        <button class="menu-control" id="menuButton"></button>
+        <div class="dropdown-menu" id="headerDropdown">
+          <button class="dropdown-item">Edit name</button>
+          <button class="dropdown-item">Logout</button>
+        </div>
+      </div>
+  </div>
 </header>
 
 <!--
@@ -22,14 +31,32 @@
 <main>
   <section class="messages"></section>
 
+  <div id="new-message-indicator" style="
+  position: fixed;
+  bottom: 5px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #007bff;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: none;
+  z-index: 1000;
+  font-size: 14px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);">
+    Новые сообщения ↓
+  </div>
+
   <section class="form">
     <form method="POST" action="/">
       <input type="hidden" name="username" value="guest001" />
       <textarea name="text"></textarea>
-      <button>Отправить</button>
+        <button class="send-button" type="submit" aria-label="Отправить"></button>
     </form>
   </section>
 </main>
+
 
 <script src="./js/index.js"></script>
 
