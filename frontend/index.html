@@ -13,14 +13,16 @@
       <h1>Online Chat</h1>
     </header>
 
-    <div class="messages-container" id="messages"> </div>
+    <div class="messages-container" id="messages"> <!-- Сообщения будут здесь -->
+    </div>
 
-    <form class="message-form" id="messageForm">
-      <input type="text" id="username" placeholder="Ваше имя" required>
-      <input type="text" id="message" placeholder="Ваше сообщение" required>
-      <button type="submit">Отправить</button>
-    </form>
-  </div>
+<form class="message-form" id="messageForm">
+      <input type="text" id="username" placeholder="Ваше имя" required minlength="2" maxlength="50">
+      <div class="input-wrapper">
+        <input type="text" id="message" placeholder="Ваше сообщение" required maxlength="500">
+        <button type="submit">Отправить</button>
+      </div>
+</form>
 
   <script src="app.js"></script>
 
