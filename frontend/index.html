@@ -8,16 +8,23 @@
 </head>
 <body>
 
-<header>
-  <h1>Online Chat</h1>
-</header>
+ <div class="chat-container">
+    <header class="chat-header">
+      <h1>Online Chat</h1>
+    </header>
 
-<!--
-  2. Отрисовка этого сообщения
-  1. Отправка сообщения на сервер
-    - Валидация сообщения
-  3. Периодическая отрисовка всех сообщений
--->
+    <div class="messages-container" id="messages">
+      <!-- Сообщения будут здесь -->
+    </div>
+
+    <form class="message-form" id="messageForm">
+      <input type="text" id="username" placeholder="Ваше имя" required minlength="2" maxlength="50">
+      <div class="input-wrapper">
+        <input type="text" id="message" placeholder="Ваше сообщение" required maxlength="500">
+        <button type="submit">Отправить</button>
+      </div>
+    </form>
+  </div>
 
 <main>
   <section class="messages"></section>
