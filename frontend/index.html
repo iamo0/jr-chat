@@ -8,16 +8,21 @@
 </head>
 <body>
 
-<header>
-  <h1>Online Chat</h1>
-</header>
+<div class="chat-container">
+    <header class="chat-header">
+      <h1>Online Chat</h1>
+    </header>
 
-<!--
-  2. Отрисовка этого сообщения
-  1. Отправка сообщения на сервер
-    - Валидация сообщения
-  3. Периодическая отрисовка всех сообщений
--->
+    <div class="messages-container" id="messages"> </div>
+
+    <form class="message-form" id="messageForm">
+      <input type="text" id="username" placeholder="Ваше имя" required>
+      <input type="text" id="message" placeholder="Ваше сообщение" required>
+      <button type="submit">Отправить</button>
+    </form>
+  </div>
+
+  <script src="app.js"></script>
 
 <main>
   <section class="messages"></section>
