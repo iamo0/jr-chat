@@ -7,7 +7,7 @@
   <title>Online Chat</title>
 </head>
 <body>
-    
+
 <header>
   <div class="header-content">
     <svg class="logo" viewBox="0 0 36 38" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -26,13 +26,23 @@
   3. Периодическая отрисовка всех сообщений
 -->
 
+<dialog class="username">
+  <form method="POST">
+    <fieldset>
+      <label>Username</label>
+      <input required type="text" name="username" placeholder="username" autocapitalize="off" autocomplete="off"  />
+    </fieldset>
+    <button type="submit">Join</button>
+  </form>
+</dialog>
+
 <main>
   <section class="messages"></section>
 
-  <section class="form">
+  <section class="form" id="message-form">
     <form method="POST" action="/">
-        <input type="hidden" name="username" value="guest001" />
-        <div class="input-wrapper">
+      <input type="hidden" name="username" value="guest001" />
+      <div class="input-wrapper">
           <textarea 
             class="message-input" 
             placeholder="Write a message..."
@@ -47,7 +57,7 @@
             >
           </button>
         </div>
-      </form>
+    </form>
   </section>
 </main>
 
