@@ -32,7 +32,19 @@
  *      Вновь созданному сообщению добавляет визуальный индикатор о его состоянии
  */
 
+document.addEventListener('DOMContentLoaded', () => {
+  const usernameInput = document.getElementById('username');
+  const messageInput = document.getElementById('messageInput');
+  const sendButton = document.getElementById('sendButton');
+  const messagesContainer = document.getElementById('messages');
 
+const savedUsername = localStorage.getItem('chatUsername');
+  if (savedUsername) {
+    usernameInput.value = savedUsername;
+  }
+  usernameInput.addEventListener('change', () => {
+    localStorage.setItem('chatUsername', usernameInput.value);
+  });
 {
   const container = document.querySelector(".messages");
 
