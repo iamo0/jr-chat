@@ -74,46 +74,44 @@
   }
 
   function initForm() {
-    const formContainer = document.querySelector("form");
-
-    const formTextField = formContainer.querySelector("textarea");
-    const formSubmitButton = formContainer.querySelector("button");
-
-    formContainer.onsubmit = function(evt) {
+    const form = document.querySelector("form");
+    const formTextField = document.querySelector('#messageText');
+    const formSubmitButton = document.querySelector('#sendButton');
+  
+    form.addEventListener('submit', function(evt) {
       evt.preventDefault();
-      const formData = new FormData(evt.target);
-
+      
+      const formData = new FormData(form);
       const messageData = {
         username: formData.get("username"),
-        text: formData.get("text"),
+        text: formData.get("text")
       };
-
+  
+      // Блокировка формы
       formTextField.disabled = true;
       formSubmitButton.disabled = true;
-      formSubmitButton.textContent = "Сообщение отправляется...";
-
+      formSubmitButton.classList.add('sending');
+  
       fetch("http://localhost:4000/messages", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(messageData),
       })
-        .then(function(newMessageResponse) {
-          console.log(newMessageResponse.status);
-
-          if (newMessageResponse.status !== 200) {
-            //
-          }
-
-          formTextField.disabled = false;
-          formTextField.value = "";
-          formSubmitButton.disabled = false;
-          formSubmitButton.textContent = "Отправить";
-
-          getMessages();
-        });
-    }
+      .then(response => {
+        if (!response.ok) throw new Error('Ошибка отправки');
+        formTextField.value = "";
+        return getMessages();
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert('Не удалось отправить сообщение');
+      })
+      .finally(() => {
+        formTextField.disabled = false;
+        formSubmitButton.disabled = false;
+        formSubmitButton.classList.remove('sending');
+      });
+    });
   }
 
   function initChat() {
