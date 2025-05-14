@@ -48,6 +48,8 @@
 
 {
   const USERNAME_REC = "username";
+  let messagesInterval = null;
+  let isMenuOpen = false; 
 
   let username = null;
 
@@ -61,15 +63,21 @@
       const messageElement = document.createElement("article");
       messageElement.className = "message";
       messageElement.classList.toggle("message-mine", username === message.username);
+      messageElement.dataset.messageId = message.id;
 
       messageElement.innerHTML = `
-        <div class="message-header">
-          <div class="message-author">${message.username}</div>
-          <button class="message-control"></button>
-        </div>
-        <p class="message-text">${message.text}</p>
-        <time class="message-time">${message.timestamp}</time>
-      `;
+      <div class="message-header">
+        <div class="message-author">${message.username}</div>
+        ${username === message.username ? 
+          `<button class="message-menu-btn">⋯</button>
+           <div class="message-menu">
+             <button class="message-edit">Edit</button>
+             <button class="message-delete">Delete</button>
+           </div>` : ''}
+      </div>
+      <p class="message-text">${message.text}</p>
+      <time class="message-time">${message.timestamp}</time>
+    `;
 
       chatContainer.appendChild(messageElement);
     }
@@ -87,7 +95,21 @@
         return messagesResponse.json();
       })
       .then(function (messagesList) {
+        // Сохраняем состояние открытых меню
+      const openMenus = Array.from(document.querySelectorAll('.message-menu.show'))
+        .map(menu => menu.closest('.message').dataset.messageId);
+
         renderMessages(messagesList);
+
+        // Восстанавливаем открытые меню после рендера
+      openMenus.forEach(id => {
+        const message = document.querySelector(`[data-message-id="${id}"]`);
+        if (message) {
+          const menu = message.querySelector('.message-menu');
+          menu?.classList.add('show');
+        }
+      });
+
 
         if (typeof cb === "function") {
           cb();
@@ -154,7 +176,7 @@
     // Websocket
     // Message <--> Message
     getMessages();
-    setInterval(getMessages, 3000);
+    startPolling();
     initForm();
 
     // Как правильно скроллить?
@@ -164,7 +186,111 @@
 
     // | | | | | | | | | |
     //        | ||  ||| |
+
+     chatContainer.addEventListener('click', async (e) => {
+    const messageElement = e.target.closest('.message');
+    const menuBtn = e.target.closest('.message-menu-btn');
+    const editBtn = e.target.closest('.message-edit');
+    const deleteBtn = e.target.closest('.message-delete');
+    const menu = document.querySelector('.message-menu.show');
+
+    // Обработка клика по кнопке меню
+    if (menuBtn) {
+      e.stopPropagation();
+      document.querySelectorAll('.message-menu').forEach(m => m.classList.remove('show'));
+      const menu = menuBtn.nextElementSibling;
+      menu.classList.add('show');
+      isMenuOpen = true;
+      stopPolling();
+      return;
+    }
+
+    // Закрытие меню при клике вне
+    if (!e.target.closest('.message-menu') && menu) {
+      menu.classList.remove('show');
+      isMenuOpen = false;
+      startPolling();
+    }
+
+    // Обработка редактирования
+    if (editBtn) {
+       const textElement = messageElement.querySelector('.message-text');
+      const originalText = textElement.textContent;
+      
+      // Создаем поле редактирования
+      const input = document.createElement('textarea');
+      input.value = originalText;
+      textElement.replaceWith(input);
+      input.focus();
+
+      // Сохраняем изменения
+      input.addEventListener('blur', async () => {
+        const newText = input.value.trim();
+        if (newText && newText !== originalText) {
+          try {
+            await fetch(`http://localhost:4000/messages/${messageElement.dataset.messageId}`, {
+              method: 'PATCH',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ text: newText })
+            });
+            getMessages();
+            menu.classList.remove('show');
+isMenuOpen = false;
+startPolling();
+          } catch (error) {
+            alert('Error updating message');
+          }
+        } else {
+          textElement.textContent = originalText;
+          input.replaceWith(textElement);
+        }
+      });
+    }
+
+    // Обработка удаления
+    if (deleteBtn) {
+      if (confirm('Delete this message?')) {
+        try {
+          await fetch(`http://localhost:4000/messages/${messageElement.dataset.messageId}`, {
+            method: 'DELETE'
+          });
+          messageElement.remove();
+          menu.classList.remove('show');
+isMenuOpen = false;
+startPolling();
+        } catch (error) {
+          alert('Error deleting message');
+        }
+      }
+    }
+  });
+
+  // Добавьте этот обработчик для закрытия меню при клике вне
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.message-menu') && !e.target.closest('.message-menu-btn')) {
+      document.querySelectorAll('.message-menu').forEach(menu => {
+        menu.classList.remove('show');
+        isMenuOpen = false;
+        startPolling();
+      });
+    }
+  });
+
+    
   }
+
+  function startPolling() {
+  if (!messagesInterval) {
+    messagesInterval = setInterval(() => {
+      if (!isMenuOpen) getMessages();
+    }, 3000);
+  }
+}
+
+function stopPolling() {
+  clearInterval(messagesInterval);
+  messagesInterval = null;
+}
 
   // Форма может жить в двух состояниях — модальное окно показано и модальное окно
   // не показано
@@ -202,13 +328,47 @@
   function initApp() {
     username = localStorage.getItem(USERNAME_REC);
 
-    if (username === null) {
-      initUsernameForm();
-      return;
-    }
+    // Скрываем/показываем форму чата
+  const messageForm = document.querySelector('#message-form');
+  if (messageForm) messageForm.style.display = username ? 'block' : 'none';
 
+    if (username === null) {
+    initUsernameForm();
+  } else {
     initChat();
+  }
+  
+  
+  initLogoutButton();
   }
 
   initApp();
+
+  function initLogoutButton() {
+  const logoutButton = document.querySelector('.logout-button');
+  if (!logoutButton) return;
+
+  logoutButton.onclick = function() {
+    // 1. Очищаем данные пользователя
+    localStorage.removeItem(USERNAME_REC);
+    username = null;
+    
+    // 2. Останавливаем опрос сообщений
+    if (messagesInterval) {
+      clearInterval(messagesInterval);
+      messagesInterval = null;
+    }
+    
+    // 3. Очищаем чат
+    chatContainer.innerHTML = '';
+    
+    // 4. Закрываем текущий чат и показываем форму входа
+    const messageForm = document.querySelector('#message-form');
+    if (messageForm) messageForm.style.display = 'none';
+    
+    // 5. Переинициализируем приложение
+    initApp();
+  };
+}
+
 }

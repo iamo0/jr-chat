@@ -40,21 +40,35 @@ server.post("/messages", function(req: Request, res: Response) {
   //   1. Проверяются все ошибки и отправляются скопом
   //   2. Проверка останавливается на первой попавшейся ошибке и отправляется эта ошибка
 
-  // *Некрасивенько, что в одном if проводятся сразу все проверки username
-  // потому что сложно сформировать адекватное сообщение об ошибке
-  if (typeof username !== "string" || username.length < 2 || username.length > 50) {
-    res.status(400).send({
-      message: "Incorrect username",
-    });
-
+  // Валидация username
+  if (typeof username !== "string") {
+    res.status(400).send({ message: "Username must be a string" });
     return;
   }
 
-  if (typeof text !== "string" || text.length < 1 || text.length > 500) {
-    res.status(400).send({
-      message: "Incorrect message text",
-    });
+  if (username.length < 2) {
+    res.status(400).send({ message: "Username must be at least 2 characters long" });
+    return;
+  }
 
+  if (username.length > 50) {
+    res.status(400).send({ message: "Username must be no longer than 50 characters" });
+    return;
+  }
+
+  // Валидация text
+  if (typeof text !== "string") {
+    res.status(400).send({ message: "Message text must be a string" });
+    return;
+  }
+
+  if (text.length < 1) {
+    res.status(400).send({ message: "Message text cannot be empty" });
+    return;
+  }
+
+  if (text.length > 500) {
+    res.status(400).send({ message: "Message text must be no longer than 500 characters" });
     return;
   }
 
