@@ -105,42 +105,42 @@
     const usernameField = formContainer.querySelector("input[name=username]");
     usernameField.value = username;
 
-    formContainer.onsubmit = function(evt) {
-		evt.preventDefault();
+    formContainer.onsubmit = function (evt) {
+      evt.preventDefault();
 
-      	const formData = new FormData(evt.target);
+      const formData = new FormData(evt.target);
 
-      	const messageData = {
-        	username: formData.get("username"),
-        	text: formData.get("text"),
-      	};
+      const messageData = {
+        username: formData.get("username"),
+        text: formData.get("text"),
+      };
 
-      	console.log(messageData);
+      console.log(messageData);
 
-      	formTextField.disabled = true;
-      	formSubmitButton.disabled = true;
-      	formSubmitButton.textContent = "Сообщение отправляется...";
+      formTextField.disabled = true;
+      formSubmitButton.disabled = true;
+      formSubmitButton.textContent = "Сообщение отправляется...";
 
-      	fetch("http://localhost:4000/messages", {
-	        method: "POST",
-    	    headers: {
-        	  "Content-Type": "application/json",
-        	},
-        	body: JSON.stringify(messageData),
-      	})
-        	.then(function(newMessageResponse) {
-          		if (newMessageResponse.status !== 200) {
-            	console.log("Validation error");
-          	}
+      fetch("http://localhost:4000/messages", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(messageData),
+      })
+        .then(function (newMessageResponse) {
+          if (newMessageResponse.status !== 200) {
+            console.log("Validation error");
+          }
 
-          	formTextField.disabled = false;
-          	formTextField.value = "";
-          	formSubmitButton.disabled = false;
-          	formSubmitButton.textContent = "Отправить";
+          formTextField.disabled = false;
+          formTextField.value = "";
+          formSubmitButton.disabled = false;
+          formSubmitButton.textContent = "Отправить";
 
-	          getMessages();
-    	    });
-    	}
+          getMessages();
+        });
+    }
   }
 
   function initChat() {
@@ -173,7 +173,7 @@
   function initUsernameForm() {
     const usernameForm = usernameContainer.querySelector("form");
 
-    usernameForm.onsubmit = function(evt) {
+    usernameForm.onsubmit = function (evt) {
       evt.preventDefault();
 
       const formElement = evt.target;
@@ -197,7 +197,7 @@
     usernameButton.textContent = username ?? "";
 
     usernameButton.onclick = username !== null
-      ? function() {
+      ? function () {
         localStorage.removeItem(USERNAME_REC);
         initApp();
       }
