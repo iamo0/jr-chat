@@ -53,6 +53,7 @@
 
   const chatContainer = document.querySelector(".messages");
   const usernameContainer = document.querySelector(".username");
+  const usernameButton = document.querySelector("#logout");
 
   function renderMessages(messages) {
     chatContainer.innerHTML = "";
@@ -95,10 +96,6 @@
       });
   }
 
-  function scrollToBottom() {
-    chatContainer.scrollTop = chatContainer.scrollHeight;
-  }
-
   function initForm() {
     const formContainer = document.querySelector("#message-form");
 
@@ -108,7 +105,7 @@
     const usernameField = formContainer.querySelector("input[name=username]");
     usernameField.value = username;
 
-    formContainer.onsubmit = function(evt) {
+    formContainer.onsubmit = function (evt) {
       evt.preventDefault();
 
       const formData = new FormData(evt.target);
@@ -117,6 +114,8 @@
         username: formData.get("username"),
         text: formData.get("text"),
       };
+
+      console.log(messageData);
 
       formTextField.disabled = true;
       formSubmitButton.disabled = true;
@@ -129,9 +128,9 @@
         },
         body: JSON.stringify(messageData),
       })
-        .then(function(newMessageResponse) {
+        .then(function (newMessageResponse) {
           if (newMessageResponse.status !== 200) {
-            //
+            console.log("Validation error");
           }
 
           formTextField.disabled = false;
@@ -139,7 +138,7 @@
           formSubmitButton.disabled = false;
           formSubmitButton.textContent = "Отправить";
 
-          getMessages(scrollToBottom);
+          getMessages();
         });
     }
   }
@@ -174,7 +173,7 @@
   function initUsernameForm() {
     const usernameForm = usernameContainer.querySelector("form");
 
-    usernameForm.onsubmit = function(evt) {
+    usernameForm.onsubmit = function (evt) {
       evt.preventDefault();
 
       const formElement = evt.target;
@@ -185,11 +184,24 @@
 
       usernameContainer.close();
       usernameForm.onsubmit = null;
+      usernameForm.reset();
 
       initApp();
     };
 
     usernameContainer.showModal();
+  }
+
+  function initLogoutButton() {
+    usernameButton.hidden = username === null;
+    usernameButton.textContent = username ?? "";
+
+    usernameButton.onclick = username !== null
+      ? function () {
+        localStorage.removeItem(USERNAME_REC);
+        initApp();
+      }
+      : null;
   }
 
   // Модальное приложение
@@ -199,6 +211,7 @@
   // - нет username — режим ввода username
   function initApp() {
     username = localStorage.getItem(USERNAME_REC);
+    initLogoutButton();
 
     if (username === null) {
       initUsernameForm();
