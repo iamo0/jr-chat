@@ -96,9 +96,9 @@
       });
   }
 
-  function scrollToBottom() {
-    chatContainer.scrollTop = chatContainer.scrollHeight;
-  }
+  // function scrollToBottom() {
+  //   chatContainer.scrollTop = chatContainer.scrollHeight;
+  // }
 
   function initForm() {
     const formContainer = document.querySelector("#message-form");
