@@ -115,6 +115,8 @@
         text: formData.get("text"),
       };
 
+      console.log(messageData);
+
       formTextField.disabled = true;
       formSubmitButton.disabled = true;
       formSubmitButton.textContent = "Сообщение отправляется...";
