@@ -96,10 +96,6 @@
       });
   }
 
-  // function scrollToBottom() {
-  //   chatContainer.scrollTop = chatContainer.scrollHeight;
-  // }
-
   function initForm() {
     const formContainer = document.querySelector("#message-form");
 
@@ -140,7 +136,7 @@
           formSubmitButton.disabled = false;
           formSubmitButton.textContent = "Отправить";
 
-          getMessages(scrollToBottom);
+          getMessages();
         });
     }
   }
