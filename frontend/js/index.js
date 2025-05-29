@@ -53,6 +53,7 @@
 
   const chatContainer = document.querySelector(".messages");
   const usernameContainer = document.querySelector(".username");
+  const usernameButton = document.querySelector("#logout");
 
   function renderMessages(messages) {
     chatContainer.innerHTML = "";
@@ -185,11 +186,24 @@
 
       usernameContainer.close();
       usernameForm.onsubmit = null;
+      usernameForm.reset();
 
       initApp();
     };
 
     usernameContainer.showModal();
+  }
+
+  function initLogoutButton() {
+    usernameButton.hidden = username === null;
+    usernameButton.textContent = username ?? "";
+
+    usernameButton.onclick = username !== null
+      ? function() {
+        localStorage.removeItem(USERNAME_REC);
+        initApp();
+      }
+      : null;
   }
 
   // Модальное приложение
@@ -199,6 +213,7 @@
   // - нет username — режим ввода username
   function initApp() {
     username = localStorage.getItem(USERNAME_REC);
+    initLogoutButton();
 
     if (username === null) {
       initUsernameForm();
