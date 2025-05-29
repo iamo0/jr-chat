@@ -106,41 +106,41 @@
     usernameField.value = username;
 
     formContainer.onsubmit = function(evt) {
-      evt.preventDefault();
+		evt.preventDefault();
 
-      const formData = new FormData(evt.target);
+      	const formData = new FormData(evt.target);
 
-      const messageData = {
-        username: formData.get("username"),
-        text: formData.get("text"),
-      };
+      	const messageData = {
+        	username: formData.get("username"),
+        	text: formData.get("text"),
+      	};
 
-      console.log(messageData);
+      	console.log(messageData);
 
-      formTextField.disabled = true;
-      formSubmitButton.disabled = true;
-      formSubmitButton.textContent = "Сообщение отправляется...";
+      	formTextField.disabled = true;
+      	formSubmitButton.disabled = true;
+      	formSubmitButton.textContent = "Сообщение отправляется...";
 
-      fetch("http://localhost:4000/messages", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(messageData),
-      })
-        .then(function(newMessageResponse) {
-          if (newMessageResponse.status !== 200) {
-            //
-          }
+      	fetch("http://localhost:4000/messages", {
+	        method: "POST",
+    	    headers: {
+        	  "Content-Type": "application/json",
+        	},
+        	body: JSON.stringify(messageData),
+      	})
+        	.then(function(newMessageResponse) {
+          		if (newMessageResponse.status !== 200) {
+            	console.log("Validation error");
+          	}
 
-          formTextField.disabled = false;
-          formTextField.value = "";
-          formSubmitButton.disabled = false;
-          formSubmitButton.textContent = "Отправить";
+          	formTextField.disabled = false;
+          	formTextField.value = "";
+          	formSubmitButton.disabled = false;
+          	formSubmitButton.textContent = "Отправить";
 
-          getMessages();
-        });
-    }
+	          getMessages();
+    	    });
+    	}
   }
 
   function initChat() {
