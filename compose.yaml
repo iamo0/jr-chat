@@ -9,7 +9,7 @@ services:
     ports:
       - "4001:4001"
     volumes:
-      - ./frontend/src:/apps
+      - ./frontend:/app
 
   backend:
     image: my-backend
