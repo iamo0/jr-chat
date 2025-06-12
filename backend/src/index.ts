@@ -9,7 +9,7 @@ type Message = {
 };
 
 const server = express();
-const PORT = 4000;
+const PORT = process.env.APP_PORT || 4000;
 
 const messages:Message[] = [];
 
@@ -30,7 +30,9 @@ server.get("/", function(req: Request, res: Response) {
 });
 
 server.get("/messages", function(req: Request, res: Response) {
-  res.status(200).json([...messages]);
+  res.status(200).json([...messages].filter((m) => 
+    Date.now() - +new Date(m.timestamp) < 1000 * 60 * 60 * 24 * 3
+  ));
 });
 
 server.post("/messages", function(req: Request, res: Response) {
