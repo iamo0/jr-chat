@@ -4,6 +4,15 @@ import { Client } from "pg";
 
 const PORT = process.env.APP_PORT || 4000;
 
+// Структура БД:
+// — Пользователи
+// — Сообщения
+// — Сообщения <== один ко многим  ==> Пользователи
+
+// один к одному => у каждого пользователя может быть только одно сообщение
+// [один ко многим => у каждого пользователя может быть много сообщений]
+// многие ко многим => у многих пользователей может быть много сообщений
+
 type Message = {
   "id": number,
   "username": string,
@@ -11,11 +20,12 @@ type Message = {
   "timestamp": string,
 };
 
-const client = new Client();
+const pgClient = new Client();
 
 const server = express();
 
 const messages: Message[] = [];
+
 // CREATE TABLE messages (
 //  id SERIAL,
 // );
@@ -96,7 +106,7 @@ async function initServer() {
     res.status(201).send(newMessage);
   });
 
-  await client.connect();
+  await pgClient.connect();
 
   server.listen(PORT, function () {
     console.log(`[server]: Server is running at http://localhost:${PORT}`);
@@ -104,7 +114,7 @@ async function initServer() {
 }
 
 process.on("exit", async function () {
-  await client.end();
+  await pgClient.end();
 });
 
 initServer();
