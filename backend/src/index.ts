@@ -4,15 +4,6 @@ import { Client } from "pg";
 
 const PORT = process.env.APP_PORT || 4000;
 
-// Структура БД:
-// -[x] Пользователи
-// -[ ] Сообщения
-// -[ ] Сообщения <== один ко многим  ==> Пользователи
-
-// один к одному => у каждого пользователя может быть только одно сообщение
-// [один ко многим => у каждого пользователя может быть много сообщений]
-// многие ко многим => у многих пользователей может быть много сообщений
-
 type Message = {
   "id": number,
   "username": string,
@@ -25,21 +16,6 @@ const pgClient = new Client();
 const server = express();
 
 const messages: Message[] = [];
-
-// CREATE TABLE messages (
-//  id SERIAL,
-// );
-
-// ------------------------------------------------|--------------
-//             DB        Tables      Columns       |     Rows
-// ------------------------------------------------|--------------
-// Create          CREATE/ALTER                    |    INSERT
-// Update          ALTER                           |    UDPATE
-// Delete          DROP/ALTER                      |    DELETE
-// ------------------------------------------------|--------------
-// Read                          SELECT
-// ------------------------------------------------|--------------
-
 
 function* infiniteSequence() {
   let i = 0;
@@ -72,12 +48,6 @@ async function initServer() {
   server.post("/messages", function (req: Request, res: Response) {
     const { username, text } = req.body;
 
-    // 2 Стратегии валидации
-    //   1. Проверяются все ошибки и отправляются скопом
-    //   2. Проверка останавливается на первой попавшейся ошибке и отправляется эта ошибка
-
-    // *Некрасивенько, что в одном if проводятся сразу все проверки username
-    // потому что сложно сформировать адекватное сообщение об ошибке
     if (typeof username !== "string" || username.length < 2 || username.length > 50) {
       res.status(400).send({
         message: "Incorrect username",
@@ -102,7 +72,6 @@ async function initServer() {
     };
 
     messages.push(newMessage);
-    // INSERT INTO messages (user_id, text) VALUES (1, "Привет");
     res.status(201).send(newMessage);
   });
 
