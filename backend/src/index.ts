@@ -4,6 +4,11 @@ import { Client } from "pg";
 
 const PORT = process.env.APP_PORT || 4000;
 
+type User = {
+  "user_id": number,
+  "username": string,
+};
+
 type Message = {
   "id": number,
   "username": string,
@@ -35,8 +40,18 @@ async function initServer() {
 
   server.use(express.json());
 
+  // 1. Авторизация пользователей (создаем нового пользователя)
+  //    при входе на страницу, если его не существовало
+
+  // 2. Подпись сообщений настоящим пользователем
+
   server.get("/", function (req: Request, res: Response) {
     res.status(200).json("Hello from backend");
+  });
+
+  server.get("/users", async function(req: Request, res: Response) {
+    const usersResponse = await pgClient.query("SELECT * FROM users");
+    res.status(200).send(usersResponse.rows);
   });
 
   server.get("/messages", function (req: Request, res: Response) {
