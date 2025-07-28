@@ -181,11 +181,6 @@
       const formData = new FormData(formElement);
       const enteredUsername = formData.get("username");
 
-      // - [x] Отправляем POST-запрос на сервер с именем пользователя
-      // - [ ] Сервер проверяет существует ли такой пользователь и если нет, создает
-      // - [-] Сервер отправляет нам в ответ ID пользователя
-      // - [ ] Мы сохраняем ID пользователя в localStorage и подписываем им все сообщения в /messages
-
       fetch("http://localhost:4000/users", {
         method: "POST",
         headers: {

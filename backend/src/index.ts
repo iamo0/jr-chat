@@ -29,9 +29,6 @@ async function initServer() {
 
   server.use(express.json());
 
-  // - [ ] Авторизация пользователей (создаем нового пользователя)
-  //       при входе на страницу, если его не существовало
-
   async function getUsers() {
     const usersResponse = await pgClient.query("SELECT * FROM users");
     return usersResponse.rows as User[];
