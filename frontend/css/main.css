@@ -29,6 +29,10 @@ header h1 {
   width: 50%;
 }
 
+.message-author-deleted {
+  color: #ccc;
+}
+
 .message-mine {
   margin-left: auto;
 }

@@ -11,7 +11,7 @@ type User = {
 
 type Message = {
   "id": number,
-  "username": string,
+  "username": string | null,
   "text": string,
   "timestamp": string,
 };
@@ -38,10 +38,8 @@ async function initServer() {
 
   server.use(express.json());
 
-  // 1. Авторизация пользователей (создаем нового пользователя)
-  //    при входе на страницу, если его не существовало
-
-  // 2. Подпись сообщений настоящим пользователем
+  // - [ ] Авторизация пользователей (создаем нового пользователя)
+  //       при входе на страницу, если его не существовало
 
   server.get("/", function (req: Request, res: Response) {
     res.status(200).json("Hello from backend");
@@ -53,12 +51,14 @@ async function initServer() {
   });
 
   server.get("/messages", async function (req: Request, res: Response) {
-    const messagesResponse = await pgClient.query(`SELECT 
-      message_id as id,
-      user_id as username,
-      text,
-      created_at as timestamp
-    FROM messages`);
+    const messagesResponse = await pgClient.query(`SELECT
+      messages.message_id AS id,
+      users.username AS username,
+      messages.text AS text,
+      messages.created_at AS timestamp
+    FROM messages
+    LEFT JOIN users ON messages.user_id = users.user_id
+    ORDER BY messages.created_at ASC`);
 
     res.status(200).send(messagesResponse.rows as Message[]);
   });
@@ -66,13 +66,13 @@ async function initServer() {
   server.post("/messages", async function (req: Request, res: Response) {
     const { username, text } = req.body;
 
-    if (typeof username !== "string" || username.length < 2 || username.length > 50) {
-      res.status(400).send({
-        message: "Incorrect username",
-      });
+    // if (typeof username !== "string" || username.length < 2 || username.length > 50) {
+    //   res.status(400).send({
+    //     message: "Incorrect username",
+    //   });
 
-      return;
-    }
+    //   return;
+    // }
 
     if (typeof text !== "string" || text.length < 1 || text.length > 500) {
       res.status(400).send({

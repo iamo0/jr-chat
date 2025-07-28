@@ -64,7 +64,7 @@
 
       messageElement.innerHTML = `
         <div class="message-header">
-          <div class="message-author">${message.username}</div>
+          <div class="message-author">${message.username ?? `<span class="message-author-deleted">✖️ Пользователь удален</span>`}</div>
           <button class="message-control"></button>
         </div>
         <p class="message-text">${message.text}</p>
