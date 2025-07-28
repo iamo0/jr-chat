@@ -35,7 +35,7 @@ async function initServer() {
   }
 
   async function getUserById(userId: number) {
-    const usersResponse = await pgClient.query(`SELECT * FROM users WHERE user_id = ${userId}`);
+    const usersResponse = await pgClient.query(`SELECT * FROM users WHERE user_id = $1::integer`, [userId]);
 
     if (usersResponse.rows.length > 0) {
       return usersResponse.rows[0] as User;
@@ -45,7 +45,7 @@ async function initServer() {
   }
 
   async function getUserByName(username: string) {
-    const usersResponse = await pgClient.query(`SELECT * FROM users WHERE username = '${username}'`);
+    const usersResponse = await pgClient.query(`SELECT * FROM users WHERE username = $1::text`, [username]);
 
     if (usersResponse.rows.length > 0) {
       return usersResponse.rows[0] as User;
@@ -77,8 +77,8 @@ async function initServer() {
     const newUserResponse = await pgClient.query(`INSERT INTO users(
       username
     ) VALUES (
-      '${username}'
-    )`);
+      $1::text
+    )`, [username]);
 
     if (newUserResponse.rowCount === 0) {
       res.sendStatus(500);
@@ -132,21 +132,10 @@ async function initServer() {
     let newMessageResponse;
 
     try {
-      console.log(`INSERT INTO messages(
-        text,
-        user_id
-      ) VALUES (
-        '${text}',
-        ${user_id}
-      )`);
-
       newMessageResponse = await pgClient.query(`INSERT INTO messages(
         text,
         user_id
-      ) VALUES (
-        '${text}',
-        ${user_id}
-      )`);
+      ) VALUES ($1::text, $2::integer)`, [text, user_id]);
 
       res.sendStatus(201);
     } catch (err) {
