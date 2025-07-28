@@ -41,13 +41,28 @@ async function initServer() {
   // - [ ] Авторизация пользователей (создаем нового пользователя)
   //       при входе на страницу, если его не существовало
 
+  async function getUsers() {
+    const usersResponse = await pgClient.query("SELECT * FROM users");
+    return usersResponse.rows as User[];
+  }
+
+  async function getUser(userId: number) {
+    const usersResponse = await pgClient.query(`SELECT * FROM users WHERE user_id = ${userId}`);
+
+    if (usersResponse.rows.length > 0) {
+      return usersResponse.rows[0] as User;
+    }
+
+    return null;
+  }
+
   server.get("/", function (req: Request, res: Response) {
     res.status(200).json("Hello from backend");
   });
 
   server.get("/users", async function (req: Request, res: Response) {
-    const usersResponse = await pgClient.query("SELECT * FROM users");
-    res.status(200).send(usersResponse.rows as User[]);
+    const usersResponse = await getUsers();
+    res.status(200).send(usersResponse);
   });
 
   server.get("/messages", async function (req: Request, res: Response) {
@@ -64,15 +79,14 @@ async function initServer() {
   });
 
   server.post("/messages", async function (req: Request, res: Response) {
-    const { username, text } = req.body;
+    const { user_id, text } = req.body;
+    if (await getUser(user_id) === null) {
+      res.status(401).send({
+        message: "Incorrect username",
+      });
 
-    // if (typeof username !== "string" || username.length < 2 || username.length > 50) {
-    //   res.status(400).send({
-    //     message: "Incorrect username",
-    //   });
-
-    //   return;
-    // }
+      return;
+    }
 
     if (typeof text !== "string" || text.length < 1 || text.length > 500) {
       res.status(400).send({
@@ -88,7 +102,7 @@ async function initServer() {
         user_id
       ) VALUES (
         '${text}',
-        ${1 + Math.floor(Math.random() * 3)}
+        ${user_id}
       )`);
 
       res.sendStatus(201);
