@@ -114,7 +114,7 @@
       const formData = new FormData(evt.target);
 
       const messageData = {
-        username: formData.get("username"),
+        user_id: formData.get("username"),
         text: formData.get("text"),
       };
 
@@ -181,12 +181,35 @@
       const formData = new FormData(formElement);
       const enteredUsername = formData.get("username");
 
-      localStorage.setItem(USERNAME_REC, enteredUsername);
+      // - [x] Отправляем POST-запрос на сервер с именем пользователя
+      // - [ ] Сервер проверяет существует ли такой пользователь и если нет, создает
+      // - [-] Сервер отправляет нам в ответ ID пользователя
+      // - [ ] Мы сохраняем ID пользователя в localStorage и подписываем им все сообщения в /messages
 
-      usernameContainer.close();
-      usernameForm.onsubmit = null;
+      fetch("http://localhost:4000/users", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          "username": enteredUsername,
+        }),
+      })
+        .then(function(authResponse) {
+          if (authResponse.status !== 200) {
+            //
+          }
 
-      initApp();
+          return authResponse.json();
+        })
+        .then(function(authResponseData) {
+          localStorage.setItem(USERNAME_REC, authResponseData.user_id);
+
+          usernameContainer.close();
+          usernameForm.onsubmit = null;
+
+          initApp();
+        });
     };
 
     usernameContainer.showModal();
